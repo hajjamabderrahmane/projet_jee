@@ -18,7 +18,6 @@ public interface InscriptionRepository extends JpaRepository<Inscription, Long> 
     Optional<Inscription> findByUserIdAndEvenementId(Long userId, Long evenementId);
     boolean existsByUserIdAndEvenementId(Long userId, Long evenementId);
 
-    // Count validated inscriptions to check remaining capacity
     @Query("SELECT COUNT(i) FROM Inscription i WHERE i.evenement.id = :evenementId AND i.statut = 'VALIDEE'")
     int countValidatedByEvenementId(@Param("evenementId") Long evenementId);
 }
