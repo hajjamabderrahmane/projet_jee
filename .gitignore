@@ -1,0 +1,6 @@
+EventLink/target/
+EventLink/data/
+.idea/
+*.iml
+.env
+*.log
