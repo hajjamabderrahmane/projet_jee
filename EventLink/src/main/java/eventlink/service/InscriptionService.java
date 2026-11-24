@@ -48,6 +48,11 @@ public class InscriptionService {
     @Transactional
     public Inscription valider(Long inscriptionId) {
         Inscription inscription = getById(inscriptionId);
+        if (inscription.getStatut() != StatutInscription.EN_ATTENTE) {
+            throw new DuplicateResourceException(
+                    "Cette inscription a déjà été traitée."
+            );
+        }
 
         int placesOccupees = inscriptionRepository.countValidatedByEvenementId(
                 inscription.getEvenement().getId());
@@ -68,6 +73,11 @@ public class InscriptionService {
     @Transactional
     public Inscription refuser(Long inscriptionId) {
         Inscription inscription = getById(inscriptionId);
+        if (inscription.getStatut() != StatutInscription.EN_ATTENTE) {
+            throw new DuplicateResourceException(
+                    "Cette inscription a déjà été traitée."
+            );
+        }
         inscription.setStatut(StatutInscription.REFUSEE);
         Inscription saved = inscriptionRepository.save(inscription);
 

@@ -3,7 +3,6 @@ package eventlink.web.controllers;
 import eventlink.dao.entities.Commentaire;
 import eventlink.security.AuthenticatedUserService;
 import eventlink.service.CommentaireService;
-import eventlink.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +17,6 @@ import java.util.Map;
 public class CommentaireController {
 
     private final CommentaireService commentaireService;
-    private final UserService userService;
     private final AuthenticatedUserService authenticatedUserService;
 
     // POST /api/commentaires

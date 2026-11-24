@@ -19,11 +19,7 @@ public class UserController {
     private final UserService userService;
     private final AuthenticatedUserService authenticatedUserService;
 
-    // POST /api/users/register
-    // @PostMapping("/register")
-    //public ResponseEntity<User> register(@Valid @RequestBody User user) {
-        //return ResponseEntity.status(HttpStatus.CREATED).body(userService.register(user));
-    //}
+
     // GET /api/users/me
     @GetMapping("/me")
     public ResponseEntity<User> getCurrentUser() {
