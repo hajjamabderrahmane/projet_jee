@@ -10,4 +10,6 @@ import java.util.List;
 public interface CommentaireRepository extends JpaRepository<Commentaire, Long> {
     List<Commentaire> findByEvenementIdOrderByDateCreationDesc(Long evenementId);
     List<Commentaire> findByUserId(Long userId);
+    boolean existsByEvenementId(Long evenementId);
+    boolean existsByUserId(Long userId);
 }

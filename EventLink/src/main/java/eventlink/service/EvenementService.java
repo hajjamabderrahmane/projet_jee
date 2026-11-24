@@ -6,7 +6,9 @@ import eventlink.dao.repositories.EvenementRepository;
 import eventlink.exceptions.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
+import eventlink.dao.repositories.InscriptionRepository;
+import eventlink.dao.repositories.CommentaireRepository;
+import eventlink.exceptions.InvalidRequestException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -15,6 +17,8 @@ import java.util.List;
 public class EvenementService {
 
     private final EvenementRepository evenementRepository;
+    private final InscriptionRepository inscriptionRepository;
+    private final CommentaireRepository commentaireRepository;
 
     public Evenement create(Evenement evenement) {
         return evenementRepository.save(evenement);
@@ -32,10 +36,19 @@ public class EvenementService {
     }
 
     public void delete(Long id) {
-        if (!evenementRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Événement introuvable : " + id);
+        Evenement evenement = getById(id);
+
+        if (inscriptionRepository.existsByEvenementId(id)) {
+            throw new InvalidRequestException(
+                    "Impossible de supprimer cet événement car il possède des inscriptions."
+            );
         }
-        evenementRepository.deleteById(id);
+        if (commentaireRepository.existsByEvenementId(id)) {
+            throw new InvalidRequestException(
+                    "Impossible de supprimer cet événement car il possède des commentaires."
+            );
+        }
+        evenementRepository.delete(evenement);
     }
 
     public Evenement getById(Long id) {
