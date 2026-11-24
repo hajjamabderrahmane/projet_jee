@@ -36,6 +36,7 @@ public class CommentaireService {
     }
 
     public Commentaire ajouter(Long userId, Long evenementId, String contenu) {
+        validerContenu(contenu);
         User user = userService.getById(userId);
         Evenement evenement = evenementRepository.findById(evenementId)
                 .orElseThrow(() -> new ResourceNotFoundException("Événement introuvable : " + evenementId));
@@ -52,6 +53,7 @@ public class CommentaireService {
     public Commentaire modifier(Long commentaireId, Long userId, String nouveauContenu) {
         Commentaire commentaire = getById(commentaireId);
         checkOwnership(commentaire, userId);
+        validerContenu(nouveauContenu);
         commentaire.setContenu(nouveauContenu);
         return commentaireRepository.save(commentaire);
     }

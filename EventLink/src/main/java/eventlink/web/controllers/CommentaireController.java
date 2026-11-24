@@ -20,7 +20,7 @@ public class CommentaireController {
     private final AuthenticatedUserService authenticatedUserService;
 
     // POST /api/commentaires
-    // Body: { "userId": 1, "evenementId": 2, "contenu": "Super événement !" }
+    // Body: { "evenementId": 2, "contenu": "Super événement !" }
     @PostMapping
     public ResponseEntity<Commentaire> ajouter(
             @RequestBody Map<String, String> body) {
@@ -48,7 +48,7 @@ public class CommentaireController {
         return ResponseEntity.ok(commentaireService.getByUser(userId));
     }
     // PUT /api/commentaires/{id}
-    // Body: { "userId": 1, "contenu": "Contenu modifié" }
+    // Body: { "contenu": "Contenu modifié" }
     @PutMapping("/{id}")
     public ResponseEntity<Commentaire> modifier(
             @PathVariable Long id,
