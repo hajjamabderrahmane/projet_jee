@@ -4,6 +4,7 @@ import eventlink.dao.entities.Notification;
 import eventlink.dao.entities.User;
 import eventlink.dao.repositories.NotificationRepository;
 import eventlink.exceptions.ResourceNotFoundException;
+import eventlink.exceptions.UnauthorizedActionException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -32,13 +33,22 @@ public class NotificationService {
         return notificationRepository.findByUserIdAndLueFalse(userId);
     }
 
+
     public int countNonLues(Long userId) {
         return notificationRepository.countByUserIdAndLueFalse(userId);
     }
 
-    public Notification marquerLue(Long notificationId) {
+
+    public Notification marquerLue(Long notificationId, Long userId) {
         Notification notification = notificationRepository.findById(notificationId)
-                .orElseThrow(() -> new ResourceNotFoundException("Notification introuvable : " + notificationId));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Notification introuvable : " + notificationId));
+
+        if (!notification.getUser().getId().equals(userId)) {
+            throw new UnauthorizedActionException(
+                    "Vous ne pouvez modifier que vos propres notifications.");
+        }
+
         notification.setLue(true);
         return notificationRepository.save(notification);
     }

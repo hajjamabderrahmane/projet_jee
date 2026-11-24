@@ -1,6 +1,7 @@
 package eventlink.web.controllers;
 
 import eventlink.dao.entities.Notification;
+import eventlink.security.AuthenticatedUserService;
 import eventlink.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,34 +16,41 @@ import java.util.Map;
 public class NotificationController {
 
     private final NotificationService notificationService;
+    private final AuthenticatedUserService authenticatedUserService;
 
-    // GET /api/notifications/user/{userId}
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Notification>> getByUser(@PathVariable Long userId) {
+    // GET /api/notifications/me
+    @GetMapping("/me")
+    public ResponseEntity<List<Notification>> getMyNotifications() {
+        Long userId = authenticatedUserService.getCurrentUserId();
         return ResponseEntity.ok(notificationService.getByUser(userId));
     }
 
-    // GET /api/notifications/user/{userId}/non-lues
-    @GetMapping("/user/{userId}/non-lues")
-    public ResponseEntity<List<Notification>> getNonLues(@PathVariable Long userId) {
+    // GET /api/notifications/me/non-lues
+    @GetMapping("/me/non-lues")
+    public ResponseEntity<List<Notification>> getMyNonLues() {
+        Long userId = authenticatedUserService.getCurrentUserId();
         return ResponseEntity.ok(notificationService.getNonLues(userId));
     }
 
-    // GET /api/notifications/user/{userId}/count
-    @GetMapping("/user/{userId}/count")
-    public ResponseEntity<Map<String, Integer>> countNonLues(@PathVariable Long userId) {
-        return ResponseEntity.ok(Map.of("nonLues", notificationService.countNonLues(userId)));
+    // GET /api/notifications/me/count
+    @GetMapping("/me/count")
+    public ResponseEntity<Map<String, Integer>> countMyNonLues() {
+        Long userId = authenticatedUserService.getCurrentUserId();
+        return ResponseEntity.ok(
+                Map.of("nonLues", notificationService.countNonLues(userId)));
     }
 
     // PUT /api/notifications/{id}/lue
     @PutMapping("/{id}/lue")
     public ResponseEntity<Notification> marquerLue(@PathVariable Long id) {
-        return ResponseEntity.ok(notificationService.marquerLue(id));
+        Long userId = authenticatedUserService.getCurrentUserId();
+        return ResponseEntity.ok(notificationService.marquerLue(id, userId));
     }
 
-    // PUT /api/notifications/user/{userId}/toutes-lues
-    @PutMapping("/user/{userId}/toutes-lues")
-    public ResponseEntity<Void> marquerToutesLues(@PathVariable Long userId) {
+    // PUT /api/notifications/me/toutes-lues
+    @PutMapping("/me/toutes-lues")
+    public ResponseEntity<Void> marquerToutesLues() {
+        Long userId = authenticatedUserService.getCurrentUserId();
         notificationService.marquerToutesLues(userId);
         return ResponseEntity.noContent().build();
     }

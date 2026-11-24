@@ -1,7 +1,9 @@
 package eventlink.web.controllers;
 
 import eventlink.dao.entities.Commentaire;
+import eventlink.security.AuthenticatedUserService;
 import eventlink.service.CommentaireService;
+import eventlink.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,14 +18,19 @@ import java.util.Map;
 public class CommentaireController {
 
     private final CommentaireService commentaireService;
+    private final UserService userService;
+    private final AuthenticatedUserService authenticatedUserService;
 
     // POST /api/commentaires
     // Body: { "userId": 1, "evenementId": 2, "contenu": "Super événement !" }
     @PostMapping
-    public ResponseEntity<Commentaire> ajouter(@RequestBody Map<String, String> body) {
-        Long userId = Long.parseLong(body.get("userId"));
+    public ResponseEntity<Commentaire> ajouter(
+            @RequestBody Map<String, String> body) {
+
+        Long userId = authenticatedUserService.getCurrentUserId();
         Long evenementId = Long.parseLong(body.get("evenementId"));
         String contenu = body.get("contenu");
+
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(commentaireService.ajouter(userId, evenementId, contenu));
     }
@@ -34,27 +41,36 @@ public class CommentaireController {
         return ResponseEntity.ok(commentaireService.getByEvenement(evenementId));
     }
 
-    // GET /api/commentaires/user/{userId}
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Commentaire>> getByUser(@PathVariable Long userId) {
+    // GET /api/commentaires/me
+    @GetMapping("/me")
+    public ResponseEntity<List<Commentaire>> getMyComments() {
+
+        Long userId = authenticatedUserService.getCurrentUserId();
+
         return ResponseEntity.ok(commentaireService.getByUser(userId));
     }
-
     // PUT /api/commentaires/{id}
     // Body: { "userId": 1, "contenu": "Contenu modifié" }
     @PutMapping("/{id}")
-    public ResponseEntity<Commentaire> modifier(@PathVariable Long id,
-                                                @RequestBody Map<String, String> body) {
-        Long userId = Long.parseLong(body.get("userId"));
+    public ResponseEntity<Commentaire> modifier(
+            @PathVariable Long id,
+            @RequestBody Map<String, String> body) {
+
+        Long userId = authenticatedUserService.getCurrentUserId();
         String contenu = body.get("contenu");
-        return ResponseEntity.ok(commentaireService.modifier(id, userId, contenu));
+
+        return ResponseEntity.ok(
+                commentaireService.modifier(id, userId, contenu));
     }
 
-    // DELETE /api/commentaires/{id}/user/{userId}  (participant)
-    @DeleteMapping("/{id}/user/{userId}")
-    public ResponseEntity<Void> supprimer(@PathVariable Long id,
-                                          @PathVariable Long userId) {
+    // DELETE /api/commentaires/{id}
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> supprimer(@PathVariable Long id) {
+
+        Long userId = authenticatedUserService.getCurrentUserId();
+
         commentaireService.supprimer(id, userId);
+
         return ResponseEntity.noContent().build();
     }
 

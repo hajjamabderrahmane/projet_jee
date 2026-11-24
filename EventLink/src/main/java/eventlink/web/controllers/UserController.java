@@ -18,10 +18,10 @@ public class UserController {
     private final UserService userService;
 
     // POST /api/users/register
-    @PostMapping("/register")
-    public ResponseEntity<User> register(@Valid @RequestBody User user) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.register(user));
-    }
+    // @PostMapping("/register")
+    //public ResponseEntity<User> register(@Valid @RequestBody User user) {
+        //return ResponseEntity.status(HttpStatus.CREATED).body(userService.register(user));
+    //}
 
     // GET /api/users/{id}
     @GetMapping("/{id}")

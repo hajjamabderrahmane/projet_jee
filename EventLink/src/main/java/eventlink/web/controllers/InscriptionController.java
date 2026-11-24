@@ -1,12 +1,16 @@
 package eventlink.web.controllers;
 
 import eventlink.dao.entities.Inscription;
+import eventlink.security.AuthenticatedUserService;
 import eventlink.service.InscriptionService;
+import eventlink.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
 
+import eventlink.dao.entities.User;
 import java.util.List;
 import java.util.Map;
 
@@ -16,21 +20,42 @@ import java.util.Map;
 public class InscriptionController {
 
     private final InscriptionService inscriptionService;
-
+    private final AuthenticatedUserService authenticatedUserService;
     // POST /api/inscriptions
     // Body: { "userId": 1, "evenementId": 2, "lienLinkedIn": "https://..." }
-    @PostMapping
+    /* @PostMapping
     public ResponseEntity<Inscription> inscrire(@RequestBody Map<String, String> body) {
         Long userId = Long.parseLong(body.get("userId"));
         Long evenementId = Long.parseLong(body.get("evenementId"));
         String lienLinkedIn = body.get("lienLinkedIn");
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(inscriptionService.inscrire(userId, evenementId, lienLinkedIn));
+    }*/
+
+    // POST /api/inscriptions
+    @PostMapping
+    public ResponseEntity<Inscription> inscrire(@RequestBody Map<String, String> body) {
+
+        Long userId = authenticatedUserService.getCurrentUserId();
+
+        Long evenementId = Long.parseLong(body.get("evenementId"));
+        String lienLinkedIn = body.get("lienLinkedIn");
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(inscriptionService.inscrire(userId, evenementId, lienLinkedIn));
     }
 
     // GET /api/inscriptions/user/{userId}
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Inscription>> getByUser(@PathVariable Long userId) {
+    // @GetMapping("/user/{userId}")
+    // public ResponseEntity<List<Inscription>> getByUser(@PathVariable Long userId) {
+     //   return ResponseEntity.ok(inscriptionService.getByUser(userId));
+    //}
+    // GET /api/inscriptions/me
+    @GetMapping("/me")
+    public ResponseEntity<List<Inscription>> getMyInscriptions() {
+
+        Long userId = authenticatedUserService.getCurrentUserId();
+
         return ResponseEntity.ok(inscriptionService.getByUser(userId));
     }
 
