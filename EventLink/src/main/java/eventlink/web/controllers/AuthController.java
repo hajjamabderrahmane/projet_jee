@@ -3,6 +3,7 @@ package eventlink.web.controllers;
 import eventlink.dao.entities.User;
 import eventlink.security.JwtUtil;
 import eventlink.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,8 +25,9 @@ public class AuthController {
 
     // POST /api/auth/register
     @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody User user) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.register(user));
+    public ResponseEntity<User> register(@Valid @RequestBody User user) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(userService.register(user));
     }
 
     // POST /api/auth/login

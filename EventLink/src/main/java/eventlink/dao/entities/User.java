@@ -38,7 +38,6 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @NotNull(message = "Le rôle est obligatoire")
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;

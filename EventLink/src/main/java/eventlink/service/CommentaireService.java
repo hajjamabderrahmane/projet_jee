@@ -9,6 +9,7 @@ import eventlink.exceptions.ResourceNotFoundException;
 import eventlink.exceptions.UnauthorizedActionException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import eventlink.exceptions.InvalidRequestException;
 
 import java.util.List;
 
@@ -19,6 +20,20 @@ public class CommentaireService {
     private final CommentaireRepository commentaireRepository;
     private final EvenementRepository evenementRepository;
     private final UserService userService;
+
+    private void validerContenu(String contenu) {
+        if (contenu == null || contenu.isBlank()) {
+            throw new InvalidRequestException(
+                    "Le commentaire ne peut pas être vide."
+            );
+        }
+
+        if (contenu.length() > 1000) {
+            throw new InvalidRequestException(
+                    "Le commentaire ne doit pas dépasser 1000 caractères."
+            );
+        }
+    }
 
     public Commentaire ajouter(Long userId, Long evenementId, String contenu) {
         User user = userService.getById(userId);

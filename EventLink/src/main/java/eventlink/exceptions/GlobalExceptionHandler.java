@@ -56,7 +56,11 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.INTERNAL_SERVER_ERROR, "Erreur interne : " + ex.getMessage());
 
     }
-
+    @ExceptionHandler(InvalidRequestException.class)
+    public ResponseEntity<Map<String, Object>> handleInvalidRequest(
+            InvalidRequestException ex) {
+        return build(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
     private ResponseEntity<Map<String, Object>> build(HttpStatus status, Object message) {
         Map<String, Object> body = new HashMap<>();
         body.put("timestamp", LocalDateTime.now().toString());
