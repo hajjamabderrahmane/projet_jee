@@ -12,4 +12,6 @@ public interface CommentaireRepository extends JpaRepository<Commentaire, Long> 
     List<Commentaire> findByUserId(Long userId);
     boolean existsByEvenementId(Long evenementId);
     boolean existsByUserId(Long userId);
+    void deleteByUserId(Long userId);
+
 }

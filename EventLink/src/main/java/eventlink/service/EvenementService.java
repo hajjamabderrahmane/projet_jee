@@ -2,6 +2,7 @@ package eventlink.service;
 
 import eventlink.dao.entities.Categorie;
 import eventlink.dao.entities.Evenement;
+import eventlink.dao.entities.StatutInscription;
 import eventlink.dao.repositories.EvenementRepository;
 import eventlink.exceptions.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,18 @@ public class EvenementService {
     }
 
     public Evenement update(Long id, Evenement updated) {
+
+        int inscriptionsValidees =
+                inscriptionRepository.countByEvenementIdAndStatut(
+                        id, StatutInscription.VALIDEE
+                );
+
+        if (updated.getCapacite() < inscriptionsValidees) {
+            throw new InvalidRequestException(
+                    "La capacité ne peut pas être inférieure au nombre d'inscriptions validées ("
+                            + inscriptionsValidees + ")."
+            );
+        }
         Evenement existing = getById(id);
         existing.setTitre(updated.getTitre());
         existing.setDescription(updated.getDescription());

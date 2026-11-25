@@ -8,6 +8,10 @@ import eventlink.exceptions.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import eventlink.dao.repositories.InscriptionRepository;
+import eventlink.dao.repositories.CommentaireRepository;
+import eventlink.dao.repositories.NotificationRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -16,6 +20,9 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final InscriptionRepository inscriptionRepository;
+    private final CommentaireRepository commentaireRepository;
+    private final NotificationRepository notificationRepository;
     private final PasswordEncoder passwordEncoder;
 
     public User register(User user) {
@@ -41,10 +48,15 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("Utilisateur introuvable : " + email));
     }
 
+    @Transactional
     public void deleteById(Long id) {
-        if (!userRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Utilisateur introuvable : " + id);
-        }
-        userRepository.deleteById(id);
+
+        User user = getById(id);
+
+        commentaireRepository.deleteByUserId(id);
+        inscriptionRepository.deleteByUserId(id);
+        notificationRepository.deleteByUserId(id);
+
+        userRepository.delete(user);
     }
 }
