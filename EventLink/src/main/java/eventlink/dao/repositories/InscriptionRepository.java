@@ -22,5 +22,4 @@ public interface InscriptionRepository extends JpaRepository<Inscription, Long> 
     boolean existsByUserId(Long userId);
     void deleteByUserId(Long userId);
     int countByEvenementIdAndStatut(Long evenementId, StatutInscription statut);
-    int countValidatedByEvenementId(@Param("evenementId") Long evenementId);
 }
