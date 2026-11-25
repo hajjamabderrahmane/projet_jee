@@ -30,7 +30,9 @@ public class InscriptionService {
         Evenement evenement = evenementRepository.findById(evenementId)
                 .orElseThrow(() -> new ResourceNotFoundException("Événement introuvable : " + evenementId));
 
-        int placesOccupees = inscriptionRepository.countValidatedByEvenementId(evenementId);
+        int placesOccupees = inscriptionRepository.countByEvenementIdAndStatut(
+                evenementId, StatutInscription.VALIDEE);
+
         if (placesOccupees >= evenement.getCapacite()) {
             throw new CapacityExceededException("Événement complet ! Le nombre maximal de participants a été atteint.");
         }
@@ -54,8 +56,8 @@ public class InscriptionService {
             );
         }
 
-        int placesOccupees = inscriptionRepository.countValidatedByEvenementId(
-                inscription.getEvenement().getId());
+        int placesOccupees = inscriptionRepository.countByEvenementIdAndStatut(
+                inscription.getEvenement().getId(), StatutInscription.VALIDEE);
         if (placesOccupees >= inscription.getEvenement().getCapacite()) {
             throw new CapacityExceededException("Plus de places disponibles pour valider cette inscription.");
         }
@@ -108,7 +110,8 @@ public class InscriptionService {
     public int getPlacesRestantes(Long evenementId) {
         Evenement evenement = evenementRepository.findById(evenementId)
                 .orElseThrow(() -> new ResourceNotFoundException("Événement introuvable : " + evenementId));
-        int occupees = inscriptionRepository.countValidatedByEvenementId(evenementId);
+        int occupees = inscriptionRepository.countByEvenementIdAndStatut(
+                evenementId, StatutInscription.VALIDEE);
         return evenement.getCapacite() - occupees;
     }
 }
