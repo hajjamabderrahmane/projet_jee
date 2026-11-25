@@ -53,8 +53,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGeneric(Exception ex) {
-        return build(HttpStatus.INTERNAL_SERVER_ERROR, "Erreur interne : " + ex.getMessage());
+        ex.printStackTrace();
 
+        return build(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                "Une erreur interne est survenue."
+        );
     }
     @ExceptionHandler(InvalidRequestException.class)
     public ResponseEntity<Map<String, Object>> handleInvalidRequest(
